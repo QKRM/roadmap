@@ -1,0 +1,21 @@
+{
+  "name": "컴퓨터공학 자습 로드맵",
+  "short_name": "CS 로드맵",
+  "description": "컴퓨터공학과 전공 10개 분야 50개 주제를 마인드맵으로. 무엇을 할 수 있으면 끝인지, 어디서 막히는지, 뭘 같이 공부하면 되는지까지.",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "id": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b0f1a",
+  "theme_color": "#0b0f1a",
+  "categories": ["education", "productivity", "developer"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
