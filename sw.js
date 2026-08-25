@@ -6,13 +6,26 @@
  *
  * 배포할 때 index.html 의 ?v=N 과 함께 아래 VERSION 도 올린다.
  */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = `cs-roadmap-${VERSION}`;
+
+/* 첫 방문에서 곧바로 오프라인이 돼도 화면이 뜨도록 핵심 자원을 미리 담는다.
+ * 도메인 파일까지 넣는 이유 — 하나라도 없으면 마인드맵이 비어 버린다. */
+const PRECACHE = [
+  './', './index.html', './css/style.css',
+  './js/data.js', './js/paths.js', './js/mindmap.js', './js/app.js', './js/pwa.js',
+  './js/domains/01-programming.js', './js/domains/02-datastructure.js',
+  './js/domains/03-algorithm.js', './js/domains/04-architecture.js',
+  './js/domains/05-os.js', './js/domains/06-network.js',
+  './js/domains/07-database.js', './js/domains/08-engineering.js',
+  './js/domains/09-theory.js', './js/domains/10-advanced.js',
+  './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'
+];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE)
-      .then(c => c.addAll(['./', './index.html']))
+      .then(c => c.addAll(PRECACHE))
       .catch(() => {})            // 오프라인 설치 등 실패해도 진행
       .then(() => self.skipWaiting())
   );

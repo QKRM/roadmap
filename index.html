@@ -10,12 +10,12 @@
 <meta property="og:type" content="website" />
 <meta name="theme-color" content="#0b0f1a" />
 <meta property="og:image" content="icons/icon-512.png" />
-<link rel="manifest" href="manifest.webmanifest?v=1" />
+<link rel="manifest" href="manifest.webmanifest?v=2" />
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="CS 로드맵" />
-<link rel="stylesheet" href="css/style.css?v=1" />
+<link rel="stylesheet" href="css/style.css?v=2" />
 <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png" />
 </head>
 <body>
@@ -35,8 +35,8 @@
       <kbd>/</kbd>
     </div>
     <div class="level-filter" role="group" aria-label="난이도 필터">
-      <button class="lv-chip on" data-level="1"><i style="--c:#4ade80"></i>1학년</button>
-      <button class="lv-chip on" data-level="2"><i style="--c:#facc15"></i>2~3학년</button>
+      <button class="lv-chip on" data-level="1"><i style="--c:#4ade80"></i>입문</button>
+      <button class="lv-chip on" data-level="2"><i style="--c:#facc15"></i>중급</button>
       <button class="lv-chip on" data-level="3"><i style="--c:#f87171"></i>심화</button>
     </div>
     <button id="expandAll" class="ghost-btn" title="전체 펼치기 / 접기">전체 접기</button>
@@ -57,6 +57,11 @@
     </g>
   </svg>
 
+  <button id="pathBtn" class="path-fab" title="어떤 순서로 갈지 보기">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v9m0 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm14-9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm0 6v2a4 4 0 0 1-4 4h-4"/></svg>
+    <span>추천 경로</span>
+  </button>
+
   <button id="installBtn" class="install-btn" hidden>
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
     <span>앱으로 설치</span>
@@ -68,7 +73,7 @@
     <button data-zoom="fit" title="화면에 맞추기">⤢</button>
   </div>
 
-  <p class="hint" id="hint">주제를 클릭하면 무엇을 할 수 있어야 끝인지, 어디서 막히는지가 나온다 · 같은 분야의 다른 주제도 함께 펼쳐진다</p>
+  <p class="hint" id="hint">주제를 클릭하면 무엇을 할 수 있어야 끝인지가 나온다 · 뭐부터 할지 모르겠으면 오른쪽 위 <b>추천 경로</b></p>
 </main>
 
 <aside class="panel" id="panel" aria-hidden="true">
@@ -92,19 +97,20 @@
 </div>
 
 <!-- 코어 → 분야(로드 순서 = 마인드맵 배치 순서) → 렌더러 -->
-<script src="js/data.js?v=1"></script>
-<script src="js/domains/01-programming.js?v=1"></script>
-<script src="js/domains/02-datastructure.js?v=1"></script>
-<script src="js/domains/03-algorithm.js?v=1"></script>
-<script src="js/domains/04-architecture.js?v=1"></script>
-<script src="js/domains/05-os.js?v=1"></script>
-<script src="js/domains/06-network.js?v=1"></script>
-<script src="js/domains/07-database.js?v=1"></script>
-<script src="js/domains/08-engineering.js?v=1"></script>
-<script src="js/domains/09-theory.js?v=1"></script>
-<script src="js/domains/10-advanced.js?v=1"></script>
-<script src="js/mindmap.js?v=1"></script>
-<script src="js/app.js?v=1"></script>
-<script src="js/pwa.js?v=1"></script>
+<script src="js/data.js?v=2"></script>
+<script src="js/domains/01-programming.js?v=2"></script>
+<script src="js/domains/02-datastructure.js?v=2"></script>
+<script src="js/domains/03-algorithm.js?v=2"></script>
+<script src="js/domains/04-architecture.js?v=2"></script>
+<script src="js/domains/05-os.js?v=2"></script>
+<script src="js/domains/06-network.js?v=2"></script>
+<script src="js/domains/07-database.js?v=2"></script>
+<script src="js/domains/08-engineering.js?v=2"></script>
+<script src="js/domains/09-theory.js?v=2"></script>
+<script src="js/domains/10-advanced.js?v=2"></script>
+<script src="js/paths.js?v=2"></script>
+<script src="js/mindmap.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
+<script src="js/pwa.js?v=2"></script>
 </body>
 </html>

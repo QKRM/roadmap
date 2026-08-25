@@ -201,6 +201,19 @@ const MindMap = (() => {
         }));
       }
 
+      // 추천 경로에서만 켜지는 단계 번호 배지
+      if (n.type !== 'root') {
+        const sg = el('g', { class: 'step-badge' });
+        sg.appendChild(el('circle', {
+          cx: -n.w / 2, cy: -n.h / 2, r: 12 * FS, fill: '#0b0f1a', stroke: n.color, 'stroke-width': 2
+        }));
+        const st = el('text', { class: 'label step', x: -n.w / 2, y: -n.h / 2 + 4.5 * FS, fill: n.color });
+        sg.appendChild(st);
+        g.appendChild(sg);
+        n.stepEl = sg;
+        n.stepText = st;
+      }
+
       g.addEventListener('click', ev => { ev.stopPropagation(); activate(n); });
       g.addEventListener('keydown', ev => {
         if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); activate(n); }
@@ -231,11 +244,16 @@ const MindMap = (() => {
     return d ? d.id : id;
   }
 
+  /* 추천 경로 표시 — id -> 단계 번호. null 이면 경로 표시가 꺼진 상태. */
+  let pathOrder = null;
+
+  const topicIdOf = n => (n.type === 'domain' ? n.lead.id : n.id);
+
   function matches(n) {
     if (!query) return true;
     const p = n.type === 'domain' ? n.lead : n.data;
     const hay = [
-      p.name, p.tag, p.why, p.goal,
+      p.name, p.tag, p.check, p.why, p.goal,
       (p.stack || []).join(' '),
       (p.deliver || []).join(' '),
       (p.concepts || []).map(c => c.t + ' ' + c.d).join(' '),
@@ -311,6 +329,15 @@ const MindMap = (() => {
       const hit = query && matches(n);
       n.dim = !!query && !hit;
       n.el.classList.toggle('hit', !!hit);
+
+      // 추천 경로: 경로에 든 노드만 단계 번호를 달고, 나머지는 흐리게
+      const step = pathOrder ? pathOrder.get(topicIdOf(n)) : null;
+      if (n.stepEl) {
+        n.stepEl.style.opacity = step ? 1 : 0;
+        if (step) n.stepText.textContent = step;
+      }
+      n.el.classList.toggle('on-path', !!step);
+      if (pathOrder && !query) n.dim = !step;
     });
 
     kick();
@@ -630,6 +657,23 @@ const MindMap = (() => {
       fit();
     },
     expandAll: setAll,
+    /* 추천 경로 표시. list = [{ id, step }] — 같은 단계면 같은 번호를 쓴다. */
+    setPath(list) {
+      if (!list || !list.length) { pathOrder = null; layout(); return; }
+      pathOrder = new Map();
+      list.forEach(it => {
+        const nid = resolve(it.id);
+        const n = byId.get(nid);
+        if (!n) return;
+        // 대표 주제가 아닌 항목은 그 분야를 펼쳐야 노드가 보인다
+        if (n.type === 'project') expanded.add(n.parent.id);
+        pathOrder.set(topicIdOf(n), it.step);
+      });
+      layout();
+      fit();
+    },
+    clearPath() { pathOrder = null; layout(); },
+    get pathOn() { return !!pathOrder; },
     get allExpanded() { return expanded.size >= ROADMAP.domains.length; },
     node: id => byId.get(id)
   };

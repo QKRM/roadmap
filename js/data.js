@@ -19,8 +19,8 @@
  */
 
 const LEVELS = {
-  1: { label: '1학년', color: '#4ade80', desc: '전공 진입 직후 바로 시작 가능' },
-  2: { label: '2~3학년', color: '#facc15', desc: '전공 필수 과목과 함께 가는 구간' },
+  1: { label: '입문', color: '#4ade80', desc: '선행 지식 거의 없이 바로 시작 가능' },
+  2: { label: '중급', color: '#facc15', desc: '전공 필수 과목과 함께 가는 구간' },
   3: { label: '심화', color: '#f87171', desc: '여러 과목을 조합해야 넘어가는 구간' }
 };
 

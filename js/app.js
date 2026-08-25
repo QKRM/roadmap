@@ -1,4 +1,4 @@
-/* UI 배선: 상세 패널, 검색, 학년 필터, 해시 라우팅 */
+/* UI 배선: 상세 패널, 검색, 난이도 필터, 추천 경로, 해시 라우팅 */
 (() => {
   const panel = document.getElementById('panel');
   const body = document.getElementById('panelBody');
@@ -49,8 +49,8 @@
           '가운데를 둘러싼 10개가 전공 분야별 대표 주제다. 클릭하면 상세가 열린다.',
           '동시에 같은 분야의 다른 주제가 펼쳐진다 (+N 배지가 그 개수).',
           '한 번 더 클릭하면 다시 접힌다. "전체 펼치기"로 50개를 한꺼번에 볼 수도 있다.',
-          '학년 필터로 지금 감당되는 것만 골라 볼 수 있다.',
-          '학기 시간표에 있는 과목부터 열고, 거기서 연결된 분야로 넘어간다.'
+          '난이도 필터로 지금 감당되는 것만 골라 볼 수 있다.',
+          '순서를 모르겠으면 오른쪽 위 추천 경로 — 목표별로 밟을 순서를 단계로 묶어 뒀다.'
         ])}
       </div>
 
@@ -88,6 +88,116 @@
         </div>
       </div>
     `);
+  }
+
+  /* ── 추천 경로 ───────────────────────────────────── */
+  const topicById = id => {
+    for (const d of ROADMAP.domains) {
+      const p = d.projects.find(x => x.id === id);
+      if (p) return { topic: p, domain: d };
+    }
+    return null;
+  };
+
+  const pathById = id => PATHS.find(p => p.id === id);
+
+  function pathStats(p) {
+    const ids = p.stages.flatMap(s => s.items);
+    return { stages: p.stages.length, topics: new Set(ids).size };
+  }
+
+  function renderPathPicker() {
+    openPanel(`
+      <div class="p-kicker">추천 경로</div>
+      <h2>어떤 순서로 갈까?</h2>
+      <p class="p-tag">50개를 한꺼번에 보면 아무것도 시작이 안 된다. 목표에 맞는 갈래를 하나 골라 위에서부터 내려간다.</p>
+
+      <div class="p-section">
+        <h3>경로 고르기</h3>
+        <div class="path-cards">
+          ${PATHS.map(p => {
+            const st = pathStats(p);
+            return `
+            <button class="path-card" data-path="${p.id}" style="--k:${p.color}">
+              <b>${esc(p.label)}</b>
+              <span>${esc(p.tag)}</span>
+              <em>${st.stages}단계 · ${st.topics}주제 · ${esc(p.span)}</em>
+            </button>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="p-section">
+        <h3>경로를 쓰는 법</h3>
+        ${list([
+          '단계 안의 주제들은 순서가 없다 — 같이 굴려도 된다. 단계와 단계 사이만 지킨다.',
+          '한 단계를 끝내는 기준은 그 단계의 목표 문장이다. 주제를 다 열어 본 것이 아니라 만들 수 있게 된 것.',
+          '"마인드맵에 표시"를 누르면 경로에 든 주제에만 단계 번호가 붙는다.',
+          '경로에 없는 주제도 언제든 들어가도 된다. 이건 최단 경로 제안이지 금지 목록이 아니다.'
+        ])}
+      </div>
+    `);
+  }
+
+  function renderPath(p) {
+    const st = pathStats(p);
+    openPanel(`
+      <div class="p-kicker" style="--k:${p.color}">추천 경로</div>
+      <h2>${esc(p.label)}</h2>
+      <p class="p-tag">${esc(p.tag)}</p>
+      <div class="chips">
+        <span class="chip">${st.stages}단계 · ${st.topics}주제</span>
+        <span class="chip">${esc(p.span)}</span>
+      </div>
+
+      <div class="path-actions">
+        <button class="path-btn-on" data-pathmap="${p.id}" style="--k:${p.color}">마인드맵에 표시</button>
+        <button data-pathmap="off">표시 끄기</button>
+        <button data-paths>다른 경로</button>
+      </div>
+
+      <div class="p-section">
+        <h3>누구에게 맞나</h3>
+        <p>${esc(p.forWhom)}</p>
+      </div>
+
+      <ol class="track">
+        ${p.stages.map((s, i) => `
+          <li class="track-step" style="--k:${p.color}">
+            <span class="track-num">${i + 1}</span>
+            <div class="track-body">
+              <b>${esc(s.label)}</b>
+              <span class="track-sub">${esc(s.sub)}</span>
+              <p class="track-goal">${esc(s.goal)}</p>
+              <div class="p-jump">
+                ${s.items.map(id => {
+                  const found = topicById(id);
+                  if (!found) return '';
+                  const { topic, domain } = found;
+                  return `<button data-goto="${topic.id}" title="${esc(domain.label)}">
+                    <i class="lv" style="--c:${LEVELS[topic.level].color}"></i>${esc(topic.name)}
+                  </button>`;
+                }).join('')}
+              </div>
+            </div>
+          </li>`).join('')}
+      </ol>
+
+      <div class="p-section">
+        <h3>다 밟았다면</h3>
+        ${list([
+          '경로 밖의 분야를 하나 골라 관심이 가는 주제부터 연다.',
+          '끝낸 주제는 자가진단 질문에 다시 답해 본다. 막히면 그 주제는 아직 끝난 것이 아니다.',
+          '만든 산출물을 한 저장소에 모으고 README를 남긴다.'
+        ])}
+      </div>
+    `);
+  }
+
+  function showPathOnMap(p) {
+    const list = [];
+    p.stages.forEach((s, i) => s.items.forEach(id => list.push({ id, step: i + 1 })));
+    MindMap.setPath(list);
   }
 
   function renderDomain(d) {
@@ -246,6 +356,21 @@
       }).catch(() => { copy.textContent = '복사 실패'; });
       return;
     }
+    const pathCard = e.target.closest('[data-path]');
+    if (pathCard) {
+      const p = pathById(pathCard.dataset.path);
+      if (p) { renderPath(p); showPathOnMap(p); }
+      return;
+    }
+    const pathMap = e.target.closest('[data-pathmap]');
+    if (pathMap) {
+      const v = pathMap.dataset.pathmap;
+      if (v === 'off') MindMap.clearPath();
+      else { const p = pathById(v); if (p) showPathOnMap(p); }
+      return;
+    }
+    if (e.target.closest('[data-paths]')) { renderPathPicker(); return; }
+
     const btn = e.target.closest('[data-goto]');
     if (btn) show(btn.dataset.goto, { focus: true });
   });
@@ -269,7 +394,7 @@
     hint?.classList.add('gone');
   });
 
-  /* 학년 필터 */
+  /* 난이도 필터 */
   const chips = [...document.querySelectorAll('.lv-chip')];
   chips.forEach(c => c.addEventListener('click', () => {
     c.classList.toggle('on');
@@ -298,6 +423,17 @@
     else if (b.dataset.zoom === 'out') MindMap.zoomBy(0.8);
     else MindMap.fit();
   });
+
+  /* 추천 경로 버튼 */
+  document.getElementById('pathBtn').addEventListener('click', () => {
+    hint?.classList.add('gone');
+    renderPathPicker();
+  });
+
+  /* 경로에 적힌 주제 id가 실재하는지 진입 시 한 번 검사한다 */
+  PATHS.forEach(p => p.stages.forEach(s => s.items.forEach(id => {
+    if (!topicById(id)) console.warn('추천 경로에 없는 주제 id:', p.id, id);
+  })));
 
   /* 딥링크 (#topic-id) */
   if (location.hash.length > 1) {
