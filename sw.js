@@ -6,7 +6,7 @@
  *
  * 배포할 때 index.html 의 ?v=N 과 함께 아래 VERSION 도 올린다.
  */
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `cs-roadmap-${VERSION}`;
 
 /* 첫 방문에서 곧바로 오프라인이 돼도 화면이 뜨도록 핵심 자원을 미리 담는다.
